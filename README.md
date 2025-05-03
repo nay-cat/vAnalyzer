@@ -1,3 +1,7 @@
+# Analyses files and their security percentage directly from discord (VirusTotal, Tria.ge, HibrydAnalysis)
+
+API-Key required
+
 Download ![image](https://github.com/user-attachments/assets/bcab6fa2-05c0-4669-8ca8-dc8c0141daad) for latest version (with tria.ge support)
 
 Follow this guide with src/userplugins
