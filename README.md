@@ -28,6 +28,8 @@ vAnalyzer combines three layers:
 1. **Manual analysis** from context menus
 2. **Automatic analysis** when messages arrive (based on configuration)
 3. **Visual enrichment** inside the message (results accessory)
+4. **Custom modular scanning system** <img width="597" height="798" alt="image" src="https://github.com/user-attachments/assets/6b9a4e55-0297-40ed-b09a-d872133dde45" />
+
 
 Features: whitelists/blacklists, local caching and custom modules to connect your own endpoints.
 
@@ -39,7 +41,6 @@ Features: whitelists/blacklists, local caching and custom modules to connect you
 <img width="601" height="198" alt="image" src="https://github.com/user-attachments/assets/3f82ae52-6f7a-4836-8646-74cecf9e8491" />
 <img width="629" height="358" alt="image" src="https://github.com/user-attachments/assets/caeb8d65-c035-4618-be56-e07794a71cc6" />
 <img width="425" height="501" alt="image" src="https://github.com/user-attachments/assets/c9f60a3c-34c0-4368-9273-daa261b3d2cd" />
-<img width="597" height="798" alt="image" src="https://github.com/user-attachments/assets/feac20a8-bc2e-4e87-8fcb-34766f1cdb13" />
 <img width="626" height="379" alt="image" src="https://github.com/user-attachments/assets/03fb8544-c000-4a73-8bfd-91473f430ad9" />
 
 ## Architecture
