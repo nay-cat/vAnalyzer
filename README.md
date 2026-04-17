@@ -33,6 +33,14 @@ Features: whitelists/blacklists, local caching and custom modules to connect you
 
 ---
 
+<img width="440" height="214" alt="image" src="https://github.com/user-attachments/assets/badf06e5-6ec2-47d5-9feb-c2d8b6d8ebca" />
+<img width="457" height="213" alt="image" src="https://github.com/user-attachments/assets/f6137e24-8232-4c09-bd91-22b0c11401c9" />
+<img width="620" height="269" alt="image" src="https://github.com/user-attachments/assets/a87b78f6-8fc4-4a12-af94-b756c090d78d" />
+<img width="601" height="198" alt="image" src="https://github.com/user-attachments/assets/3f82ae52-6f7a-4836-8646-74cecf9e8491" />
+<img width="629" height="358" alt="image" src="https://github.com/user-attachments/assets/caeb8d65-c035-4618-be56-e07794a71cc6" />
+<img width="425" height="501" alt="image" src="https://github.com/user-attachments/assets/c9f60a3c-34c0-4368-9273-daa261b3d2cd" />
+<img width="597" height="798" alt="image" src="https://github.com/user-attachments/assets/feac20a8-bc2e-4e87-8fcb-34766f1cdb13" />
+<img width="626" height="379" alt="image" src="https://github.com/user-attachments/assets/03fb8544-c000-4a73-8bfd-91473f430ad9" />
 
 ## Architecture
 
@@ -287,4 +295,17 @@ The message accessory displays:
 
 - I'm not an expert in TypeScript; the plugin has a lot of bugs, and the code is inefficient in many places. I'd love for people to contribute, but always in a respectful way. You might think this project is silly, and I respect that, but I prefer to focus on the positive.
 
-- I am not responsible for any misuse, damages, or consequences arising from the use of this plugin. 
+- I am not responsible for any misuse, damages, or consequences arising from the use of this plugin.
+
+## More Images
+
+<img width="599" height="621" alt="image" src="https://github.com/user-attachments/assets/f50acff9-89f2-4011-9d2a-6ec8e8a46bd6" />
+<img width="597" height="788" alt="image" src="https://github.com/user-attachments/assets/266c1467-18a0-43b8-9729-7aafe0e7abf3" />
+<img width="596" height="791" alt="image" src="https://github.com/user-attachments/assets/5b8fd4d0-70e8-40df-8d54-785e0c32eec1" />
+<img width="605" height="796" alt="image" src="https://github.com/user-attachments/assets/5f80c6b0-f23b-4a04-92dc-ea2ecd5b56da" />
+<img width="602" height="796" alt="image" src="https://github.com/user-attachments/assets/91a536ec-336e-45ca-a815-66304617bf5f" />
+
+
+
+
+
