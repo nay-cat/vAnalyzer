@@ -78,28 +78,6 @@ graph TD
 | Modular Scan | Custom HTTP endpoints | URL/file analysis |
 | Connected members | Public widget member list | Discord invite results |
 
----
-
-## Built-in Modules
-
-| Feature | Description | Where Used |
-| --- | --- | --- |
-| Manual context menus | On-demand scanning of URLs, attachments, invites, users | Messages, users, servers |
-| Auto-analysis | Automatic analysis when messages arrive | MESSAGE_CREATE flow |
-| Link click warning | Alert on flagged domains | Link click interception |
-| Message age filter | Ignore old messages by days | Auto-analysis |
-| DM-only mode | Limit auto-scan to direct messages | All analyzers |
-| Skip friends | Avoid scanning friend messages | Auto-analysis |
-| Ignore media files | Skip image/video/audio files | File auto-scan |
-| Whitelist/blocklist | Exclude/flag domains | URL pipeline |
-| FMHY auto-update | Fetch unsafe sites list | Blocklists (every 4d) |
-| OSINT shortcuts | Search User / Search Server | User/server contexts |
-| Modular Scan | Custom HTTP endpoints | URL/file analysis |
-| Connected members | Public widget member list | Discord invite results |
-
----
-
-## Built-in Modules
 
 ### Base Analyzers
 
@@ -281,16 +259,6 @@ Active blocklists:
 
 1. [FMHY](https://github.com/fmhy/FMHYFilterlist) Unsafe Sites Filterlist
 2. User custom list.
-
----
-
-## Results Interface
-
-The message accessory displays:
-
-- Status per detail (safe, suspicious, malicious, neutral, error).
-- Auto-expand when alerts present.
-- Manual dismiss.
 
 ## Disclaimer
 
