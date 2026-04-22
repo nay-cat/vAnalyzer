@@ -37,6 +37,9 @@ Features: whitelists/blacklists, local caching and custom modules to connect you
 
 <img width="440" height="214" alt="image" src="https://github.com/user-attachments/assets/badf06e5-6ec2-47d5-9feb-c2d8b6d8ebca" />
 <img width="457" height="213" alt="image" src="https://github.com/user-attachments/assets/f6137e24-8232-4c09-bd91-22b0c11401c9" />
+Search unknown users
+<img width="451" height="138" alt="image" src="https://github.com/user-attachments/assets/96c6c187-2007-4227-bd06-2470d2fd7159" />
+<img width="574" height="666" alt="image" src="https://github.com/user-attachments/assets/0df6ef09-06da-412e-8b73-6355ec9d5c9a" />
 <img width="620" height="269" alt="image" src="https://github.com/user-attachments/assets/a87b78f6-8fc4-4a12-af94-b756c090d78d" />
 <img width="601" height="198" alt="image" src="https://github.com/user-attachments/assets/3f82ae52-6f7a-4836-8646-74cecf9e8491" />
 <img width="629" height="358" alt="image" src="https://github.com/user-attachments/assets/caeb8d65-c035-4618-be56-e07794a71cc6" />
@@ -77,8 +80,11 @@ Features: whitelists/blacklists, local caching and custom modules to connect you
 | [VirusTotal](https://www.virustotal.com) | File | Scanner verdicts | ⚠️ Partial |
 | [HybridAnalysis](https://hybrid-analysis.com/) | URL/File | Multi-scanner verdicts | ❌ Yes |
 | [DangeCord](https://dangercord.com) | User | Reputation status | ❌ Yes |
+| [CordCat](https://cord.cat/donate) | User | Reputation status | ✅ No |
+
 | WaybackMachine | URL | Web archive snapshot | ✅ No |
 | ModularScan | URL/File | Endpoint response | ⚠️ Depends |
+
 
 ### Discord Invite Details
 
@@ -102,7 +108,7 @@ Note: Discord widget API has member listing limits. Plugin applies local cutoff 
 - URL redirect tracing (WhereGoes)
 - Bot profile analysis
 - Whitelist/blocklist filters
-- Search User / Search Server shortcuts
+- Search User / Search Server shortcuts, unknown user analyzer
 - VirusTotal hash lookup (no upload)
 - Modular Scan (if endpoint allows)
 
@@ -131,6 +137,8 @@ Note: Discord widget API has member listing limits. Plugin applies local cutoff 
 | warnOnFileDownload | bool | true | Flag risky downloads |
 | analyzeBotsProfile | bool | false | Auto-analyze bot profiles |
 | enableOsintSearchShortcuts | bool | true | Search User / Server shortcuts |
+| enableCordCat | bool | true | Show "Analyze with CordCat" |
+| enableFindByUserId | bool | true | Show "Find By User Id" |
 
 ### Scope
 
