@@ -79,6 +79,16 @@ export const settings = definePluginSettings(
             description: "Show Search User / Search Server shortcuts in context menus",
             default: true
         },
+        enableCordCat: {
+            type: OptionType.BOOLEAN,
+            description: "Show \"Analyze User with CordCat\" in user context menus",
+            default: true
+        },
+        enableFindUserById: {
+            type: OptionType.BOOLEAN,
+            description: "Show \"Find User by ID\" in message context menus (look up any user ID via CordCat)",
+            default: false
+        },
 
         scopeHeader: {
             type: OptionType.COMPONENT,

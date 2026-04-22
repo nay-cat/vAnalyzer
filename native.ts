@@ -15,3 +15,4 @@ export { queryWayback } from "./analyzers/WaybackMachine/native";
 export { querySucuri } from "./analyzers/Sucuri/native";
 export { traceUrl } from "./analyzers/WhereGoes/native";
 export { executeModularScan } from "./analyzers/ModularScan/native";
+export { queryCordCat } from "./analyzers/CordCat/native";

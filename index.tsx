@@ -7,14 +7,17 @@
 import "./style/styles.css";
 
 import { findGroupChildrenByChildId, NavContextMenuPatchCallback } from "@api/ContextMenu";
+import { ModalContent, ModalFooter, ModalHeader, ModalRoot, ModalSize, openModal } from "@utils/modal";
 import definePlugin from "@utils/types";
 import { Message } from "@vencord/discord-types";
-import { Alerts, Menu } from "@webpack/common";
+import { Alerts, Menu, React, TextInput, useState } from "@webpack/common";
+import { Button, TextButton } from "@components/Button";
 
 import { LinkIcon, OpenExternalIcon, SafetyIcon } from "@components/Icons";
 
 import { AnalysisAccessory, handleAnalysis } from "./AnalysisAccesory";
 import { getThreat } from "./threatStore";
+import { analyzeUserWithCordCat } from "./analyzers/CordCat";
 import { lookDangeCord } from "./analyzers/DangeCord";
 import { analyzeDiscordInvite, isDiscordInvite } from "./analyzers/DiscordInvite";
 import { analyzeFileWithHybridAnalysis, analyzeUrlWithHybridAnalysis } from "./analyzers/HybridAnalysis";
@@ -47,29 +50,81 @@ async function genericAnalyzeFile(messageId: string, fileUrl: string, fileName: 
 
 async function analyzeUser(messageId: string | undefined, user: any, silent = false) {
     const result = await lookDangeCord(user, silent);
-    if (result) {
-        if (messageId) {
-            handleAnalysis(messageId, result);
-        } else {
-            Alerts.show({
-                title: "DangeCord Analysis",
-                body: (
-                    <div className="vc-analyzer-modal">
-                        {result.details.map((detail, i) => (
-                            <div key={i} style={{ marginBottom: "4px" }}>
-                                • {detail.message}
-                            </div>
-                        ))}
-                    </div>
-                ),
-                confirmText: "Close"
-            });
-        }
+    if (!result) return;
+
+    if (messageId) {
+        handleAnalysis(messageId, result);
+        return;
     }
+
+    Alerts.show({
+        title: "DangeCord Analysis",
+        body: (
+            <div className="vc-analyzer-modal">
+                {result.details.map((detail, i) => (
+                    <div key={i} style={{ marginBottom: "4px" }}>
+                        • {detail.message}
+                    </div>
+                ))}
+            </div>
+        ),
+        confirmText: "Close"
+    });
 }
 
 function openExternal(url: string) {
     VencordNative.native.openExternal(url);
+}
+
+function extractUserIdFromContext(context: any): string | undefined {
+    if (!context || typeof context !== "object") return undefined;
+
+    const id = context.id ?? context.userId ?? context.targetUserId ?? context.user?.id;
+    if (typeof id === "string" && /^\d{17,20}$/.test(id)) return id;
+    if ((typeof id === "number" || typeof id === "bigint") && /^\d{17,20}$/.test(String(id))) return String(id);
+
+    return undefined;
+}
+
+function FindUserByIdModal({ modalProps }: { modalProps: any; }) {
+    const [userId, setUserId] = useState("");
+
+    function submit() {
+        const id = userId.trim();
+        if (!id) return;
+        modalProps.onClose();
+        analyzeUserWithCordCat(id, id);
+    }
+
+    return (
+        <ModalRoot {...modalProps} size={ModalSize.SMALL}>
+            <ModalHeader>
+                <span style={{ fontWeight: 700, fontSize: "16px", color: "var(--white-500, #fff)" }}>Find User by ID — CordCat</span>
+            </ModalHeader>
+            <ModalContent style={{ padding: "16px" }}>
+                <p style={{ marginBottom: "10px", color: "var(--text-muted)", fontSize: "13px" }}>
+                    Enter a Discord User ID to query CordCat:
+                </p>
+                <TextInput
+                    autoFocus
+                    placeholder="447812212241989632"
+                    value={userId}
+                    onChange={setUserId}
+                    onKeyDown={(e: React.KeyboardEvent) => { if (e.key === "Enter") submit(); }}
+                />
+            </ModalContent>
+            <ModalFooter>
+                <Button onClick={submit} disabled={!userId.trim()}>Look Up</Button>
+                <TextButton variant="link" onClick={modalProps.onClose} style={{ marginLeft: "8px" }}>
+                    Cancel
+                </TextButton>
+            </ModalFooter>
+        </ModalRoot>
+    );
+}
+
+function openFindUserByIdModal() {
+    openModal(modalProps => <FindUserByIdModal modalProps={modalProps} />);
 }
 
 function getUserSearchLinks(userId: string) {
@@ -125,6 +180,29 @@ const messageCtxPatch: NavContextMenuPatchCallback = (children, { message }: { m
             action={() => analyzeUser(message.id, message.author)}
         />
     );
+
+    if (settings.store.enableCordCat) {
+        const authorName = message.author.username || message.author.id;
+        group.push(
+            <Menu.MenuItem
+                id="vc-analyze-author-cordcat"
+                label="Scan author with CordCat"
+                icon={SafetyIcon}
+                action={() => analyzeUserWithCordCat(message.author.id, authorName)}
+            />
+        );
+    }
+
+    if (settings.store.enableFindUserById) {
+        group.push(
+            <Menu.MenuItem
+                id="vc-analyze-find-user-by-id"
+                label="Find User by ID"
+                icon={SafetyIcon}
+                action={openFindUserByIdModal}
+            />
+        );
+    }
 
     if (!hasAttachments && !hasUrls && !hasInvites && !hasCdnFiles) return;
 
@@ -201,9 +279,12 @@ const messageCtxPatch: NavContextMenuPatchCallback = (children, { message }: { m
                 icon={LinkIcon}
             >
                 {urlAnalyzers.map(analyzer => {
-                    const action = analyzer.fn
-                        ? (url: string) => genericAnalyze(message.id, url, analyzer.fn!)
-                        : (url: string) => manualAnalyzeUrls(message, [url]);
+                    let action: (url: string) => void;
+                    if (analyzer.fn) {
+                        action = (url: string) => genericAnalyze(message.id, url, analyzer.fn!);
+                    } else {
+                        action = (url: string) => manualAnalyzeUrls(message, [url]);
+                    }
 
                     return (
                         <Menu.MenuItem
@@ -228,7 +309,10 @@ const messageCtxPatch: NavContextMenuPatchCallback = (children, { message }: { m
     }
 
     if (hasInvites) {
-        const analyzeInvite = (url: string) => analyzeDiscordInvite(url).then(r => r && handleAnalysis(message.id, r));
+        const analyzeInvite = async (url: string) => {
+            const result = await analyzeDiscordInvite(url);
+            if (result) handleAnalysis(message.id, result);
+        };
 
         if (inviteUrls.length === 1) {
             group.push(
@@ -284,8 +368,11 @@ const messageCtxPatch: NavContextMenuPatchCallback = (children, { message }: { m
                             key={module.id}
                             label={module.name}
                             action={() => {
-                                if (isUrlMatch) analyzeModular(module, urls[0], "");
-                                else analyzeModular(module, message.attachments[0].url, message.attachments[0].filename);
+                                if (isUrlMatch) {
+                                    analyzeModular(module, urls[0], "");
+                                } else {
+                                    analyzeModular(module, message.attachments[0].url, message.attachments[0].filename);
+                                }
                             }}
                         >
                             {isUrlMatch && urls.length > 1 && urls.map((url, i) => (
@@ -312,10 +399,11 @@ const messageCtxPatch: NavContextMenuPatchCallback = (children, { message }: { m
     }
 };
 
-const userContextPatch: NavContextMenuPatchCallback = (children, { user }: { user: any; }) => {
-    if (!user) return;
+const userContextPatch: NavContextMenuPatchCallback = (children, { user, id }: { user?: any; id?: string; }) => {
+    const userId: string | undefined = user?.id ?? id;
+    if (!user && !userId) return;
 
-    if (settings.store.enableOsintSearchShortcuts) {
+    if (user && settings.store.enableOsintSearchShortcuts) {
         const links = getUserSearchLinks(user.id);
         children.push(
             <Menu.MenuItem
@@ -335,14 +423,54 @@ const userContextPatch: NavContextMenuPatchCallback = (children, { user }: { use
         );
     }
 
-    children.push(
-        <Menu.MenuItem
-            id="vc-analyze-user-dangecord"
-            label="Scan with DangeCord"
-            icon={SafetyIcon}
-            action={() => analyzeUser(undefined, user)}
-        />
-    );
+    if (user) {
+        children.push(
+            <Menu.MenuItem
+                id="vc-analyze-user-dangecord"
+                label="Analyze User with DangeCord"
+                icon={SafetyIcon}
+                action={() => analyzeUser(undefined, user)}
+            />
+        );
+    }
+
+    if (settings.store.enableCordCat && userId) {
+        const username = user?.username || userId;
+        children.push(
+            <Menu.MenuItem
+                id="vc-analyze-user-cordcat"
+                label="Analyze User with CordCat"
+                icon={SafetyIcon}
+                action={() => analyzeUserWithCordCat(userId, username)}
+            />
+        );
+    }
+};
+
+const devContextPatch: NavContextMenuPatchCallback = (children, context: any) => {
+    if (!settings.store.enableCordCat) return;
+
+    const userId = extractUserIdFromContext(context);
+
+    if (userId) {
+        children.push(
+            <Menu.MenuItem
+                id="vc-analyze-dev-context-cordcat"
+                label="Analyze User with CordCat"
+                icon={SafetyIcon}
+                action={() => analyzeUserWithCordCat(userId, userId)}
+            />
+        );
+    } else {
+        children.push(
+            <Menu.MenuItem
+                id="vc-analyze-dev-context-cordcat"
+                label="Find User by ID (CordCat)"
+                icon={SafetyIcon}
+                action={openFindUserByIdModal}
+            />
+        );
+    }
 };
 
 const guildContextPatch: NavContextMenuPatchCallback = (children, { guild }: { guild: { id: string; }; }) => {
@@ -377,20 +505,12 @@ export default definePlugin({
     async start() {
         await initFilters();
 
-        // sync custom whitelist/blocklist from settings
         const wl = settings.store.customWhitelist;
         if (wl) setCustomWhitelist(wl.split(",").map(s => s.trim()).filter(Boolean));
 
         const bl = settings.store.customBlocklist;
         if (bl) setCustomBlocklist(bl.split(",").map(s => s.trim()).filter(Boolean));
     },
-
-    patches: [
-        // intercept link clicks to warn about flagged URLs
-        // NOT WORKING
-        // intercept file downloads to warn about flagged files
-        // NOT WORKING
-    ],
 
     handleLinkClick(data: { href: string; }) {
         if (!data?.href || !settings.store.warnOnLinkClick) return false;
@@ -406,19 +526,13 @@ export default definePlugin({
                 resolve(block);
             };
 
-            const isMalicious = threat.level === "malicious";
-
             let title: string;
-            if (isMalicious) {
-                title = "\u26a0\ufe0f Malicious Link Detected";
-            } else {
-                title = "\u26a0\ufe0f Suspicious Link Detected";
-            }
-
             let confirmColor: string;
-            if (isMalicious) {
+            if (threat.level === "malicious") {
+                title = "Malicious Link Detected";
                 confirmColor = "var(--button-danger-background)";
             } else {
+                title = "Suspicious Link Detected";
                 confirmColor = "var(--button-outline-danger-text)";
             }
 
@@ -434,7 +548,7 @@ export default definePlugin({
                         </div>
                         <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
                             {threat.reasons.map((r, i) => (
-                                <div key={i}>{"\u2022"} {r}</div>
+                                <div key={i}>• {r}</div>
                             ))}
                         </div>
                     </div>
@@ -468,6 +582,10 @@ export default definePlugin({
     contextMenus: {
         "message": messageCtxPatch,
         "user-context": userContextPatch,
+        "user-profile-actions": userContextPatch,
+        "user-profile-overflow-menu": userContextPatch,
+        "unknown-user-context": devContextPatch,
+        "dev-context": devContextPatch,
         "guild-context": guildContextPatch,
         "guild-header-popout": guildContextPatch
     },
