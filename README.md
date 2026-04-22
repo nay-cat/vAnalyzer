@@ -43,22 +43,6 @@ Features: whitelists/blacklists, local caching and custom modules to connect you
 <img width="425" height="501" alt="image" src="https://github.com/user-attachments/assets/c9f60a3c-34c0-4368-9273-daa261b3d2cd" />
 <img width="626" height="379" alt="image" src="https://github.com/user-attachments/assets/03fb8544-c000-4a73-8bfd-91473f430ad9" />
 
-## Architecture
-
-```mermaid
-graph TD
-    A[Message Received] --> B{Filter Check}
-    B -->|Age/Friend/DM| C[Extract URLs & Files]
-    C --> D{Whitelist/Blocklist}
-    D -->|Allowed| E[Launch Analyzers]
-    D -->|Blocked| F[Flag as Suspicious]
-    E --> G[CertPL, FishFish, WhereGoes...]
-    E --> H[VirusTotal, HybridAnalysis...]
-    G --> I[Compile Results]
-    H --> I
-    I --> J[Display in Message Accessory]
-    F --> J
-```
 ---
 
 ## Main Features
