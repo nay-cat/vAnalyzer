@@ -81,7 +81,6 @@ Search unknown users
 | [HybridAnalysis](https://hybrid-analysis.com/) | URL/File | Multi-scanner verdicts | ❌ Yes |
 | [DangeCord](https://dangercord.com) | User | Reputation status | ❌ Yes |
 | [CordCat](https://cord.cat/donate) | User | Reputation status | ✅ No |
-
 | WaybackMachine | URL | Web archive snapshot | ✅ No |
 | ModularScan | URL/File | Endpoint response | ⚠️ Depends |
 
