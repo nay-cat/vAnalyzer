@@ -18,7 +18,7 @@ import { LinkIcon, OpenExternalIcon, SafetyIcon } from "@components/Icons";
 import { AnalysisAccessory, handleAnalysis } from "./AnalysisAccesory";
 import { getThreat } from "./threatStore";
 import { analyzeUserWithCordCat } from "./analyzers/CordCat";
-import { lookDangeCord } from "./analyzers/DangeCord";
+import { lookDangeCord } from "./analyzers/Dangercord";
 import { analyzeDiscordInvite, isDiscordInvite } from "./analyzers/DiscordInvite";
 import { analyzeFileWithHybridAnalysis, analyzeUrlWithHybridAnalysis } from "./analyzers/HybridAnalysis";
 import { analyzeWithCertPL } from "./analyzers/CertPL";
@@ -57,19 +57,23 @@ async function analyzeUser(messageId: string | undefined, user: any, silent = fa
         return;
     }
 
-    Alerts.show({
-        title: "DangeCord Analysis",
-        body: (
-            <div className="vc-analyzer-modal">
+    openModal(modalProps => (
+        <ModalRoot {...modalProps} size={ModalSize.SMALL}>
+            <ModalHeader>
+                <span style={{ fontWeight: 700, fontSize: "16px", color: "var(--white-500, #fff)" }}>Dangercord Analysis</span>
+            </ModalHeader>
+            <ModalContent style={{ padding: "16px" }}>
                 {result.details.map((detail, i) => (
-                    <div key={i} style={{ marginBottom: "4px" }}>
-                        • {detail.message}
+                    <div key={i} className={`vc-analyze-detail vc-analyze-${detail.type}`} style={{ marginBottom: "6px" }}>
+                        {detail.message}
                     </div>
                 ))}
-            </div>
-        ),
-        confirmText: "Close"
-    });
+            </ModalContent>
+            <ModalFooter>
+                <Button onClick={modalProps.onClose}>Close</Button>
+            </ModalFooter>
+        </ModalRoot>
+    ));
 }
 
 function openExternal(url: string) {
@@ -175,7 +179,7 @@ const messageCtxPatch: NavContextMenuPatchCallback = (children, { message }: { m
     group.push(
         <Menu.MenuItem
             id="vc-analyze-dangecord"
-            label="Scan author with DangeCord"
+            label="Scan author with Dangercord"
             icon={SafetyIcon}
             action={() => analyzeUser(message.id, message.author)}
         />
@@ -427,7 +431,7 @@ const userContextPatch: NavContextMenuPatchCallback = (children, { user, id }: {
         children.push(
             <Menu.MenuItem
                 id="vc-analyze-user-dangecord"
-                label="Analyze User with DangeCord"
+                label="Analyze User with Dangercord"
                 icon={SafetyIcon}
                 action={() => analyzeUser(undefined, user)}
             />

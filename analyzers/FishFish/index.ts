@@ -5,20 +5,20 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { showToast, Toasts } from "@webpack/common";
+import { Toasts } from "@webpack/common";
 
-import { AnalysisValue, extractDomain } from "../../utils";
+import { AnalysisValue, extractDomain, safeToast } from "../../utils";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
 export async function analyzeWithFishFish(url: string, silent = false): Promise<AnalysisValue | null> {
     const domain = extractDomain(url);
-    if (!silent) showToast(`Checking ${domain} against FishFish phishing list...`, Toasts.Type.MESSAGE);
+    if (!silent) safeToast(`Checking ${domain} against FishFish phishing list...`);
 
     const result = await Native.queryFishFish(domain);
 
     if (result.error) {
-        if (!silent) showToast(`FishFish lookup failed: ${result.error}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`FishFish lookup failed: ${result.error}`, Toasts.Type.FAILURE);
         return null;
     }
 
@@ -32,9 +32,9 @@ export async function analyzeWithFishFish(url: string, silent = false): Promise<
 
     if (!silent) {
         if (result.found) {
-            showToast(`WARNING: ${domain} is a known phishing domain!`, Toasts.Type.FAILURE);
+            safeToast(`WARNING: ${domain} is a known phishing domain!`, Toasts.Type.FAILURE);
         } else {
-            showToast(`${domain} not found in FishFish database`, Toasts.Type.SUCCESS);
+            safeToast(`${domain} not found in FishFish database`, Toasts.Type.SUCCESS);
         }
     }
 

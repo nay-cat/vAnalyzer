@@ -5,10 +5,10 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { showToast, Toasts } from "@webpack/common";
+import { Toasts } from "@webpack/common";
 
 import { settings } from "../../settings";
-import { AnalysisValue } from "userplugins/vAnalyzer/utils";
+import { AnalysisValue, safeToast } from "../../utils";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
@@ -41,7 +41,7 @@ function buildDetails(data: any): AnalysisValue["details"] {
         const s = scanner as any;
         const name = s.name ?? key;
 
-        /* 
+        /*
             this needs a rework, some endpoints have a "file_password" field to manage this cases
             for some reason, metadefender says "clean" when someone uploads a protected file in the HB endpoint,
             so I am using the crowdstrike result to show if the file was analyzed
@@ -82,7 +82,7 @@ function buildDetails(data: any): AnalysisValue["details"] {
 async function waitForResults(apiKey: string, scanId: string, silent: boolean): Promise<any> {
     for (let i = 0; i < 10; i++) {
         await new Promise(r => setTimeout(r, 3000));
-        if (!silent && i === 0) showToast("Waiting for Hybrid Analysis results...", Toasts.Type.MESSAGE);
+        if (!silent && i === 0) safeToast("Waiting for Hybrid Analysis results...");
 
         const poll = await Native.hybridAnalysisGetScan(apiKey, scanId);
         if (poll.status === 200 && poll.data) {
@@ -132,14 +132,14 @@ function buildHashDetails(reports: any[]): AnalysisValue["details"] {
 async function submitAndWait(submitFn: () => Promise<any>, silent: boolean): Promise<AnalysisValue | null> {
     const apiKey = settings.store.hybridAnalysisApiKey;
     if (!apiKey) {
-        if (!silent) showToast("Hybrid Analysis API key required. Set it in vAnalyzer settings.", Toasts.Type.FAILURE);
+        if (!silent) safeToast("Hybrid Analysis API key required. Set it in vAnalyzer settings.", Toasts.Type.FAILURE);
         return null;
     }
 
     const result = await submitFn();
 
     if (result.status !== 200 || !result.data) {
-        if (!silent) showToast(`Hybrid Analysis scan failed: ${result.error ?? result.status}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Hybrid Analysis scan failed: ${result.error ?? result.status}`, Toasts.Type.FAILURE);
         return null;
     }
 
@@ -148,7 +148,7 @@ async function submitAndWait(submitFn: () => Promise<any>, silent: boolean): Pro
     if (!isFinished(data) && !hasResults(data) && data.id) {
         data = await waitForResults(apiKey, data.id, silent);
         if (!data) {
-            if (!silent) showToast("Hybrid Analysis scan timed out", Toasts.Type.FAILURE);
+            if (!silent) safeToast("Hybrid Analysis scan timed out", Toasts.Type.FAILURE);
             return null;
         }
     }
@@ -157,7 +157,7 @@ async function submitAndWait(submitFn: () => Promise<any>, silent: boolean): Pro
 }
 
 export async function analyzeUrlWithHybridAnalysis(url: string, silent = false): Promise<AnalysisValue | null> {
-    if (!silent) showToast("Submitting URL to Hybrid Analysis...", Toasts.Type.MESSAGE);
+    if (!silent) safeToast("Submitting URL to Hybrid Analysis...");
     const apiKey = settings.store.hybridAnalysisApiKey;
     return submitAndWait(() => Native.hybridAnalysisQuickScanUrl(apiKey, url), silent);
 }
@@ -165,25 +165,25 @@ export async function analyzeUrlWithHybridAnalysis(url: string, silent = false):
 export async function analyzeFileWithHybridAnalysis(fileUrl: string, fileName: string, silent = false): Promise<AnalysisValue | null> {
     const apiKey = settings.store.hybridAnalysisApiKey;
     if (!apiKey) {
-        if (!silent) showToast("Hybrid Analysis API key required. Set it in vAnalyzer settings.", Toasts.Type.FAILURE);
+        if (!silent) safeToast("Hybrid Analysis API key required. Set it in vAnalyzer settings.", Toasts.Type.FAILURE);
         return null;
     }
 
     // hash the file and check if its already been analyzed
-    if (!silent) showToast("Hashing file...", Toasts.Type.MESSAGE);
+    if (!silent) safeToast("Hashing file...");
     const hashResult = await Native.hybridAnalysisHashFile(fileUrl);
 
     if (hashResult.sha256) {
-        if (!silent) showToast(`SHA-256: ${hashResult.sha256}. Searching...`, Toasts.Type.MESSAGE);
+        if (!silent) safeToast(`SHA-256: ${hashResult.sha256}. Searching...`);
 
         const search = await Native.hybridAnalysisSearchHash(apiKey, hashResult.sha256);
         if (search.status === 200 && search.data?.reports?.length > 0) {
-            if (!silent) showToast(`Found ${search.data.reports.length} existing report(s)`, Toasts.Type.SUCCESS);
+            if (!silent) safeToast(`Found ${search.data.reports.length} existing report(s)`, Toasts.Type.SUCCESS);
             return { details: buildHashDetails(search.data.reports), timestamp: Date.now() };
         }
     }
 
     // submit for quick scan
-    if (!silent) showToast("No existing report. Uploading file to Hybrid Analysis...", Toasts.Type.MESSAGE);
+    if (!silent) safeToast("No existing report. Uploading file to Hybrid Analysis...");
     return submitAndWait(() => Native.hybridAnalysisQuickScanFile(apiKey, fileUrl, fileName), silent);
 }

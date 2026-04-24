@@ -6,19 +6,20 @@
 
 import { ModalContent, ModalFooter, ModalHeader, ModalRoot, ModalSize, openModal } from "@utils/modal";
 import { PluginNative } from "@utils/types";
-import { Button, React, showToast, Toasts } from "@webpack/common";
+import { Button, React, Toasts } from "@webpack/common";
 
+import { safeToast } from "../../utils";
 import { CordCatModal } from "./CordCatModal";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
 export async function analyzeUserWithCordCat(userId: string, username: string): Promise<void> {
-    showToast(`Querying CordCat for ${username}...`, Toasts.Type.MESSAGE);
+    safeToast(`Querying CordCat for ${username}...`);
 
     const result = await Native.queryCordCat(userId);
 
     if (result.status !== 200) {
-        showToast(`CordCat lookup failed: HTTP ${result.status}`, Toasts.Type.FAILURE);
+        safeToast(`CordCat lookup failed: HTTP ${result.status}`, Toasts.Type.FAILURE);
         return;
     }
 

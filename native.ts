@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-export { lookupDangeCordProfile } from "./analyzers/DangeCord/native";
+export { lookupDangeCordProfile } from "./analyzers/Dangercord/native";
 export { queryCertPL } from "./analyzers/CertPL/native";
 export { queryCrtSh } from "./analyzers/CrtSh/native";
 export { queryDiscordInvite, queryDiscordGuildWidget } from "./analyzers/DiscordInvite/native";

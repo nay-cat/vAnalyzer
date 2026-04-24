@@ -5,10 +5,10 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { showToast, Toasts } from "@webpack/common";
+import { Toasts } from "@webpack/common";
 
 import { settings } from "../../settings";
-import { AnalysisValue } from "../../utils";
+import { AnalysisValue, safeToast } from "../../utils";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
@@ -49,7 +49,7 @@ async function waitForVirusTotalReport(apiKey: string, analysisId: string, silen
         }
 
         if (!silent && i === 0) {
-            showToast("VirusTotal is still processing the file. Waiting for report...", Toasts.Type.MESSAGE);
+            safeToast("VirusTotal is still processing the file. Waiting for report...");
         }
     }
 
@@ -61,53 +61,48 @@ export async function analyzeWithVirusTotal(messageId: string, url: string, sile
     const lookupFirst = !apiKey || settings.store.virusTotalLookupBeforeUpload;
 
     if (lookupFirst) {
-        if (!silent) showToast("Looking up file on VirusTotal...", Toasts.Type.MESSAGE);
+        if (!silent) safeToast("Looking up file on VirusTotal...");
 
         const lookup = await Native.lookupVirusTotalFile(url);
-
-        /*if (!silent) {
-            showToast(`SHA-256: ${lookup.sha256 ?? "error"}`, Toasts.Type.MESSAGE);
-            showToast(`VT status: ${lookup.status} | data: ${!!lookup.data}`, Toasts.Type.MESSAGE);
-        }*/
 
         if (lookup.status === 200 && lookup.data) {
             const stats = lookup.data?.data?.attributes?.last_analysis_stats;
             if (stats) {
-                if (!silent) showToast(`Found! mal:${stats.malicious} sus:${stats.suspicious} safe:${stats.harmless + stats.undetected}`, Toasts.Type.SUCCESS);
+                if (!silent) safeToast(`Found! mal:${stats.malicious} sus:${stats.suspicious} safe:${stats.harmless + stats.undetected}`, Toasts.Type.SUCCESS);
                 return { details: buildDetails(stats), timestamp: Date.now() };
             }
         }
 
         // NEED APIKEY TO UPLOAD, FILE NOT FOUND
         if (!apiKey) {
-            if (!silent) showToast("File not found on VirusTotal. Set an API key in settings to upload & scan.", Toasts.Type.FAILURE);
+            if (!silent) safeToast("File not found on VirusTotal. Set an API key in settings to upload & scan.", Toasts.Type.FAILURE);
             return null;
         }
 
-        if (!silent) showToast("File not cached. Uploading to VirusTotal...", Toasts.Type.MESSAGE);
+        if (!silent) safeToast("File not cached. Uploading to VirusTotal...");
     } else if (!silent) {
-        showToast("Uploading file to VirusTotal...", Toasts.Type.MESSAGE);
+        safeToast("Uploading file to VirusTotal...");
     }
 
     const uploadResult = await Native.makeVirusTotalRequest(apiKey, url);
 
     if (uploadResult.status !== 200) {
-        if (!silent) showToast("Failed to upload file to VirusTotal.", Toasts.Type.FAILURE);
+        if (!silent) safeToast("Failed to upload file to VirusTotal.", Toasts.Type.FAILURE);
         return null;
     }
 
     const analysisId = uploadResult.analysisId;
     if (!analysisId) {
-        if (!silent) showToast("Could not get analysis ID from VirusTotal.", Toasts.Type.FAILURE);
+        if (!silent) safeToast("Could not get analysis ID from VirusTotal.", Toasts.Type.FAILURE);
         return null;
     }
 
-    if (!silent) showToast("Fetching VirusTotal report...", Toasts.Type.MESSAGE);
+    if (!silent) safeToast("Fetching VirusTotal report...");
 
     const reportData = await waitForVirusTotalReport(apiKey, analysisId, silent);
     if (!reportData) {
         if (!silent) {
-            showToast("VirusTotal analysis is queued. Try again in a few seconds.", Toasts.Type.MESSAGE);
+            safeToast("VirusTotal analysis is queued. Try again in a few seconds.");
         }
         return {
             details: [{ message: "[VT] File uploaded successfully. Analysis is still pending.", type: "neutral" }],
@@ -117,7 +112,7 @@ export async function analyzeWithVirusTotal(messageId: string, url: string, sile
 
     const stats = reportData?.data?.attributes?.last_analysis_stats;
     if (!stats) {
-        if (!silent) showToast("Could not parse VirusTotal report.", Toasts.Type.FAILURE);
+        if (!silent) safeToast("Could not parse VirusTotal report.", Toasts.Type.FAILURE);
         return null;
     }
 

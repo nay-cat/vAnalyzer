@@ -5,9 +5,9 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { showToast, Toasts } from "@webpack/common";
+import { Toasts } from "@webpack/common";
 
-import { AnalysisValue } from "../../utils";
+import { AnalysisValue, safeToast } from "../../utils";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
@@ -40,16 +40,16 @@ export function isDiscordInvite(url: string): boolean {
 export async function analyzeDiscordInvite(url: string, silent = false): Promise<AnalysisValue | null> {
     const inviteCode = extractInviteCode(url);
     if (!inviteCode) {
-        if (!silent) showToast("Could not extract invite code from URL", Toasts.Type.FAILURE);
+        if (!silent) safeToast("Could not extract invite code from URL", Toasts.Type.FAILURE);
         return null;
     }
 
-    if (!silent) showToast(`Analyzing invite ${inviteCode}...`, Toasts.Type.MESSAGE);
+    if (!silent) safeToast(`Analyzing invite ${inviteCode}...`);
 
     const result = await Native.queryDiscordInvite(inviteCode);
 
     if (result.status !== 200 || !result.data) {
-        if (!silent) showToast(`Invite lookup failed: ${result.error ?? "invalid or expired invite"}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Invite lookup failed: ${result.error ?? "invalid or expired invite"}`, Toasts.Type.FAILURE);
         return null;
     }
 
@@ -177,7 +177,7 @@ export async function analyzeDiscordInvite(url: string, silent = false): Promise
         });
     }
 
-    // if widget is enabled, expose public widget data 
+    // if widget is enabled, expose public widget data
     const widgetResult = await Native.queryDiscordGuildWidget(guild.id);
     if (widgetResult.status === 200 && widgetResult.data) {
         const widget = widgetResult.data;

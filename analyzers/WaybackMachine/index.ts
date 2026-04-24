@@ -5,9 +5,9 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { showToast, Toasts } from "@webpack/common";
+import { Toasts } from "@webpack/common";
 
-import { AnalysisValue, extractDomain } from "../../utils";
+import { AnalysisValue, extractDomain, safeToast } from "../../utils";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
@@ -19,12 +19,12 @@ function formatWaybackTimestamp(ts: string): string {
 
 export async function analyzeWithWayback(url: string, silent = false): Promise<AnalysisValue | null> {
     const domain = extractDomain(url);
-    if (!silent) showToast(`Checking Wayback Machine for ${domain}...`, Toasts.Type.MESSAGE);
+    if (!silent) safeToast(`Checking Wayback Machine for ${domain}...`);
 
     const result = await Native.queryWayback(url);
 
     if (result.status !== 200 || !result.data) {
-        if (!silent) showToast(`Wayback lookup failed: ${result.error ?? "unknown error"}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Wayback lookup failed: ${result.error ?? "unknown error"}`, Toasts.Type.FAILURE);
         return null;
     }
 
@@ -63,6 +63,6 @@ export async function analyzeWithWayback(url: string, silent = false): Promise<A
         type: "neutral"
     });
 
-    if (!silent) showToast(`Wayback snapshot found for ${domain}`, Toasts.Type.SUCCESS);
+    if (!silent) safeToast(`Wayback snapshot found for ${domain}`, Toasts.Type.SUCCESS);
     return { details, timestamp: Date.now() };
 }

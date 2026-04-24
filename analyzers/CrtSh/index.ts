@@ -5,20 +5,20 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { showToast, Toasts } from "@webpack/common";
+import { Toasts } from "@webpack/common";
 
-import { AnalysisValue, extractDomain } from "../../utils";
+import { AnalysisValue, extractDomain, safeToast } from "../../utils";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
 export async function analyzeWithCrtSh(url: string, silent = false): Promise<AnalysisValue | null> {
     const domain = extractDomain(url);
-    if (!silent) showToast(`Checking certificates for ${domain}...`, Toasts.Type.MESSAGE);
+    if (!silent) safeToast(`Checking certificates for ${domain}...`);
 
     const result = await Native.queryCrtSh(domain);
 
     if (result.status !== 200 || !result.data) {
-        if (!silent) showToast(`Certificate lookup failed: ${result.error ?? "unknown error"}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Certificate lookup failed: ${result.error ?? "unknown error"}`, Toasts.Type.FAILURE);
         return null;
     }
 
@@ -33,7 +33,6 @@ export async function analyzeWithCrtSh(url: string, silent = false): Promise<Ana
 
     const now = new Date();
     const validCerts = certs.filter(c => new Date(c.not_after) > now);
-    const expiredCerts = certs.filter(c => new Date(c.not_after) <= now);
 
     const sortedByDate = [...certs].sort((a, b) =>
         new Date(a.not_before).getTime() - new Date(b.not_before).getTime()
@@ -74,6 +73,6 @@ export async function analyzeWithCrtSh(url: string, silent = false): Promise<Ana
         type: "neutral"
     });
 
-    if (!silent) showToast(`${certs.length} cert(s) for ${domain}`, Toasts.Type.SUCCESS);
+    if (!silent) safeToast(`${certs.length} cert(s) for ${domain}`, Toasts.Type.SUCCESS);
     return { details, timestamp: Date.now() };
 }

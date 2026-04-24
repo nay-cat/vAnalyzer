@@ -1,9 +1,9 @@
 import { User } from "@vencord/discord-types";
 import { PluginNative } from "@utils/types";
-import { showToast, Toasts } from "@webpack/common";
+import { Toasts } from "@webpack/common";
 
 import { settings } from "../../settings";
-import { AnalysisValue } from "../../utils";
+import { AnalysisValue, safeToast } from "../../utils";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 const profileCache = new Map<string, any>();
@@ -32,13 +32,13 @@ function buildDetails(data: any): AnalysisValue["details"] {
     }
 
     details.push({
-        message: `[DangeCord] Status: ${statusLabel} | Reports: ${reports}`,
+        message: `[Dangercord] Status: ${statusLabel} | Reports: ${reports}`,
         type
     });
 
     if (data.votes) {
         details.push({
-            message: `[DangeCord] Votes: ${data.votes.upvotes ?? 0} Up / ${data.votes.downvotes ?? 0} Down`,
+            message: `[Dangercord] Votes: ${data.votes.upvotes ?? 0} Up / ${data.votes.downvotes ?? 0} Down`,
             type: "neutral"
         });
     }
@@ -68,13 +68,13 @@ export async function lookDangeCord(user: User, silent = false): Promise<Analysi
     }
 
     const lookup = (async () => {
-        if (!silent) showToast("Looking up the user profile on DangeCord...", Toasts.Type.MESSAGE);
+        if (!silent) safeToast("Looking up the user profile on Dangercord...");
 
         const apiKey = settings.store.dangecordApiKey;
         const dcProfile = await Native.lookupDangeCordProfile(apiKey, memberId);
 
         if (dcProfile.status !== 200) {
-            if (!silent) showToast(`DangeCord lookup failed: ${dcProfile.status}`, Toasts.Type.FAILURE);
+            if (!silent) safeToast(`Dangercord lookup failed: ${dcProfile.status}`, Toasts.Type.FAILURE);
             return null;
         }
 

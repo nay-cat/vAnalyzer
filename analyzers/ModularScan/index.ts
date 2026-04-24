@@ -5,9 +5,9 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { showToast, Toasts } from "@webpack/common";
+import { Toasts } from "@webpack/common";
 
-import { AnalysisValue } from "../../utils";
+import { AnalysisValue, safeToast } from "../../utils";
 import { ModularScanModule } from "../../modularScanStore";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
@@ -18,14 +18,14 @@ export async function runModularScan(
     fileName: string,
     silent = false
 ): Promise<AnalysisValue | null> {
-    if (!silent) showToast(`Running ${module.name}...`, Toasts.Type.MESSAGE);
+    if (!silent) safeToast(`Running ${module.name}...`);
 
     const result = await Native.executeModularScan(module, fileUrl, fileName);
 
     const details: AnalysisValue["details"] = [];
 
     if (!result.ok) {
-        if (!silent) showToast(`${module.name} failed: ${result.status}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`${module.name} failed: ${result.status}`, Toasts.Type.FAILURE);
 
         // only report actual errors, not normal scan results
         if (result.status === -1) {

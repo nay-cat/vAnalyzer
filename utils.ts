@@ -5,8 +5,15 @@
  */
 
 import { classNameFactory } from "@utils/css";
+import { Toasts } from "@webpack/common";
 
 export const cl = classNameFactory("vc-analyze-");
+
+export function safeToast(message: string, type: string = Toasts.Type.MESSAGE) {
+    try {
+        Toasts.show({ message, id: Toasts.genId(), type });
+    } catch { }
+}
 
 export function extractDomain(url: string): string {
     try {

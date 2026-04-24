@@ -5,9 +5,9 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { showToast, Toasts } from "@webpack/common";
+import { Toasts } from "@webpack/common";
 
-import { AnalysisValue } from "../../utils";
+import { AnalysisValue, safeToast } from "../../utils";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
@@ -93,7 +93,7 @@ function buildUrlDetails(hops: TraceHop[]): AnalysisValue["details"] {
 }
 
 export async function analyzeWithWhereGoes(url: string, silent = false): Promise<AnalysisValue | null> {
-    if (!silent) showToast("Tracing URL redirects...", Toasts.Type.MESSAGE);
+    if (!silent) safeToast("Tracing URL redirects...");
 
     const result = await Native.traceUrl(url);
 
@@ -102,7 +102,7 @@ export async function analyzeWithWhereGoes(url: string, silent = false): Promise
     }
 
     if (result.status !== 200 || !result.html) {
-        if (!silent) showToast(`Trace failed: ${result.error ?? "unknown error"}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Trace failed: ${result.error ?? "unknown error"}`, Toasts.Type.FAILURE);
         return null;
     }
 
@@ -112,6 +112,6 @@ export async function analyzeWithWhereGoes(url: string, silent = false): Promise
         return { details: [{ message: "No redirects detected: direct URL", type: "safe" }], timestamp: Date.now() };
     }
 
-    if (!silent) showToast(`${hops.length} hop(s) found`, Toasts.Type.SUCCESS);
+    if (!silent) safeToast(`${hops.length} hop(s) found`, Toasts.Type.SUCCESS);
     return { details: buildUrlDetails(hops), timestamp: Date.now() };
 }

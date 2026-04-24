@@ -5,9 +5,9 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { showToast, Toasts } from "@webpack/common";
+import { Toasts } from "@webpack/common";
 
-import { AnalysisValue } from "../../utils";
+import { AnalysisValue, safeToast } from "../../utils";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
@@ -40,12 +40,12 @@ export async function analyzeWithSucuriDetailed(
     silent = false,
     suppressUnresolvedResult = false
 ): Promise<SucuriDetailedResult> {
-    if (!silent) showToast(`Scanning reputation for ${url} (Sucuri)...`, Toasts.Type.MESSAGE);
+    if (!silent) safeToast(`Scanning reputation for ${url} (Sucuri)...`);
 
     const result = await Native.querySucuri(url);
 
     if (result.error) {
-        if (!silent) showToast(`Sucuri scan failed: ${result.error}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Sucuri scan failed: ${result.error}`, Toasts.Type.FAILURE);
         return { analysis: null, domainResolved: null };
     }
 
@@ -64,7 +64,7 @@ export async function analyzeWithSucuriDetailed(
 
     // if IP is unknown
     if (ip === "Unknown") {
-        if (!silent) showToast(`Sucuri: ${url} could not be resolved`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Sucuri: ${url} could not be resolved`, Toasts.Type.FAILURE);
 
         if (suppressUnresolvedResult) {
             return { analysis: null, domainResolved: false };
@@ -123,9 +123,9 @@ export async function analyzeWithSucuriDetailed(
     if (!silent) {
         const isSafe = ratingType === "safe";
         if (isSafe) {
-            showToast(`Sucuri: ${url} looks safe.`, Toasts.Type.SUCCESS);
+            safeToast(`Sucuri: ${url} looks safe.`, Toasts.Type.SUCCESS);
         } else {
-            showToast(`Sucuri: Issues found on ${url}!`, Toasts.Type.FAILURE);
+            safeToast(`Sucuri: Issues found on ${url}!`, Toasts.Type.FAILURE);
         }
     }
 
