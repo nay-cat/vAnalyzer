@@ -79,7 +79,7 @@ Search unknown users
 | BotProfile | Bot | Account status | ✅ No |
 | [VirusTotal](https://www.virustotal.com) | File | Scanner verdicts | ⚠️ Partial |
 | [HybridAnalysis](https://hybrid-analysis.com/) | URL/File | Multi-scanner verdicts | ❌ Yes |
-| [DangeCord](https://dangercord.com) | User | Reputation status | ❌ Yes |
+| [Dangercord](https://dangercord.com) | User | Reputation status | ❌ Yes |
 | [CordCat](https://cord.cat/donate) | User | Reputation status | ✅ No |
 | WaybackMachine | URL | Web archive snapshot | ✅ No |
 | ModularScan | URL/File | Endpoint response | ⚠️ Depends |
@@ -114,7 +114,7 @@ Note: Discord widget API has member listing limits. Plugin applies local cutoff 
 **With API Keys (Additional):**
 - VirusTotal: File upload + report polling
 - Hybrid Analysis: URL/file quick scan + result polling
-- DangeCord: User reputation lookup
+- Dangercord: User reputation lookup
 
 ---
 
@@ -125,7 +125,7 @@ Note: Discord widget API has member listing limits. Plugin applies local cutoff 
 | Key | Type | Default | Description |
 | --- | --- | --- | --- |
 | virusTotalApiKey | string | — | VirusTotal API key |
-| dangecordApiKey | string | — | DangeCord API key |
+| dangercordApiKey | string | — | Dangercord API key |
 | hybridAnalysisApiKey | string | — | Hybrid Analysis API key |
 
 ### Protection
@@ -195,7 +195,7 @@ Note: Discord widget API has member listing limits. Plugin applies local cutoff 
 
 | Group | Actions |
 | --- | --- |
-| User | Scan author with DangeCord |
+| User | Scan author with Dangercord |
 | Files | Scan file with VirusTotal / Hybrid Analysis |
 | URL | Trace URL (WhereGoes), crt.sh, CERT.PL, FishFish, Sucuri, Hybrid Analysis |
 | Invite | Analyze Discord invite |
@@ -206,7 +206,8 @@ Note: Discord widget API has member listing limits. Plugin applies local cutoff 
 | Group | Actions |
 | --- | --- |
 | Search User | top.gg, DiscordHub |
-| Reputation | Scan with DangeCord |
+| Reputation | Scan with Dangercord |
+| Reputation | Scan with CordCat |
 
 ### Guild context / guild-header-popout
 
