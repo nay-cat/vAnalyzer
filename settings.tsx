@@ -54,6 +54,12 @@ export const settings = definePluginSettings(
             default: "",
             placeholder: "Enter your Hybrid Analysis API key..."
         },
+        cordCatApiKey: {
+            type: OptionType.STRING,
+            description: "CordCat API Key",
+            default: "",
+            placeholder: "(Not required for now) Enter your CordCat API key..."
+        },
 
         generalHeader: {
             type: OptionType.COMPONENT,

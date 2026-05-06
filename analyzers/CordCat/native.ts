@@ -18,7 +18,7 @@ function evictOldest() {
     }
 }
 
-export async function queryCordCat(_: IpcMainInvokeEvent, userId: string): Promise<{ status: number; data: any; }> {
+export async function queryCordCat(_: IpcMainInvokeEvent, userId: string, apiKey?: string): Promise<{ status: number; data: any; }> {
     const cached = resultCache.get(userId);
     if (cached) {
         // move to end
@@ -28,10 +28,12 @@ export async function queryCordCat(_: IpcMainInvokeEvent, userId: string): Promi
     }
 
     try {
-        const res = await fetch(`https://api.cord.cat/api/v1/query/${userId}`, {
+
+        const res = await fetch(`https://api.cord.cat/api/v2/query/${userId}`, {
             headers: {
                 "accept": "application/json",
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                "authorization": apiKey ? `Bearer ${apiKey}` : "",
             }
         });
 

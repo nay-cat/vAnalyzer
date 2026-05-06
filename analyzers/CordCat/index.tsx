@@ -10,13 +10,24 @@ import { Button, React, Toasts } from "@webpack/common";
 
 import { safeToast } from "../../utils";
 import { CordCatModal } from "./CordCatModal";
+import { settings } from "../../settings";
+import { result } from "lodash";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
 export async function analyzeUserWithCordCat(userId: string, username: string): Promise<void> {
     safeToast(`Querying CordCat for ${username}...`);
 
-    const result = await Native.queryCordCat(userId);
+    const apiKey = settings.store.cordCatApiKey;
+    let result;
+
+    if (!apiKey) {
+        // sometimes cordcat returns data without an apikey, but is unreliable, for some reason the request works without the apikey
+        result = await Native.queryCordCat(userId);
+    } else {
+        result = await Native.queryCordCat(userId, apiKey);
+    }
+
 
     if (result.status !== 200) {
         safeToast(`CordCat lookup failed: HTTP ${result.status}`, Toasts.Type.FAILURE);
