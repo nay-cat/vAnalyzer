@@ -4,30 +4,25 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { ModalContent, ModalFooter, ModalHeader, ModalRoot, ModalSize, openModal } from "@utils/modal";
 import { PluginNative } from "@utils/types";
-import { Button, React, Toasts } from "@webpack/common";
+import { Modal, openModal, React, Toasts } from "@webpack/common";
 
 import { safeToast } from "../../utils";
 import { CordCatModal } from "./CordCatModal";
 import { settings } from "../../settings";
-import { result } from "lodash";
 
 const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof import("./native")>;
 
 export async function analyzeUserWithCordCat(userId: string, username: string): Promise<void> {
-    safeToast(`Querying CordCat for ${username}...`);
-
-    const apiKey = settings.store.cordCatApiKey;
-    let result;
-
+    const apiKey = settings.store.cordCatApiKey?.trim();
     if (!apiKey) {
-        // sometimes cordcat returns data without an apikey, but is unreliable, for some reason the request works without the apikey
-        result = await Native.queryCordCat(userId);
-    } else {
-        result = await Native.queryCordCat(userId, apiKey);
+        safeToast("CordCat requires an API key. Set it in vAnalyzer settings.", Toasts.Type.FAILURE);
+        return;
     }
 
+    safeToast(`Querying CordCat for ${username}...`);
+
+    const result = await Native.queryCordCat(userId, apiKey);
 
     if (result.status !== 200) {
         safeToast(`CordCat lookup failed: HTTP ${result.status}`, Toasts.Type.FAILURE);
@@ -46,16 +41,13 @@ export async function analyzeUserWithCordCat(userId: string, username: string): 
     const title = `CordCat: ${data.userInfo?.global_name || username}${suffix}`;
 
     openModal(modalProps => (
-        <ModalRoot {...modalProps} size={ModalSize.MEDIUM}>
-            <ModalHeader>
-                <span style={{ fontWeight: 700, fontSize: 16, color: "var(--white-500, #fff)" }}>{title}</span>
-            </ModalHeader>
-            <ModalContent>
-                <CordCatModal data={data} />
-            </ModalContent>
-            <ModalFooter>
-                <Button onClick={modalProps.onClose}>Close</Button>
-            </ModalFooter>
-        </ModalRoot>
+        <Modal
+            {...modalProps}
+            size="md"
+            title={title}
+            actions={[{ text: "Close", variant: "secondary", onClick: modalProps.onClose }]}
+        >
+            <CordCatModal data={data} />
+        </Modal>
     ));
 }

@@ -5,11 +5,29 @@
  */
 
 import { definePluginSettings } from "@api/Settings";
+import { Link } from "@components/Link";
+import { Paragraph } from "@components/Paragraph";
 import { OptionType } from "@utils/types";
 import { Alerts, React } from "@webpack/common";
 
 import ModularScanSettings from "./components/ModularScanSettings";
 import SeparatorSettings from "./components/SeparatorSettings";
+
+function AboutVAnalyzer() {
+    return (
+        <Paragraph>
+            vAnalyzer, developed by nay-cat: source code, issues and contributions: <Link href="https://github.com/nay-cat/vAnalyzer/">github.com/nay-cat/vAnalyzer</Link>
+        </Paragraph>
+    );
+}
+
+function CordCatRegisterLink() {
+    return (
+        <Paragraph>
+            Get a free CordCat API key at <Link href="https://cord.cat/register">cord.cat/register</Link>
+        </Paragraph>
+    );
+}
 
 function warnAutoScan(key: "autoScanUrls" | "autoScanFiles", enabled: boolean) {
     if (!enabled) return;
@@ -32,6 +50,10 @@ function warnAutoScan(key: "autoScanUrls" | "autoScanFiles", enabled: boolean) {
 
 export const settings = definePluginSettings(
     {
+        aboutHeader: {
+            type: OptionType.COMPONENT,
+            component: AboutVAnalyzer
+        },
         apiHeader: {
             type: OptionType.COMPONENT,
             component: () => <SeparatorSettings label="Services & API Keys" />
@@ -56,9 +78,13 @@ export const settings = definePluginSettings(
         },
         cordCatApiKey: {
             type: OptionType.STRING,
-            description: "CordCat API Key",
+            description: "CordCat API Key (required for \"Analyze User with CordCat\")",
             default: "",
-            placeholder: "(Not required for now) Enter your CordCat API key..."
+            placeholder: "Enter your CordCat API key..."
+        },
+        cordCatRegisterLink: {
+            type: OptionType.COMPONENT,
+            component: CordCatRegisterLink
         },
 
         generalHeader: {

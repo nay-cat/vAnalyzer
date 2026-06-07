@@ -7,11 +7,9 @@
 import "./style/styles.css";
 
 import { findGroupChildrenByChildId, NavContextMenuPatchCallback } from "@api/ContextMenu";
-import { ModalContent, ModalFooter, ModalHeader, ModalRoot, ModalSize, openModal } from "@utils/modal";
 import definePlugin from "@utils/types";
 import { Message } from "@vencord/discord-types";
-import { Alerts, Menu, React, TextInput, useState } from "@webpack/common";
-import { Button, TextButton } from "@components/Button";
+import { Alerts, Menu, Modal, openModal, React, TextInput, useState } from "@webpack/common";
 
 import { LinkIcon, OpenExternalIcon, SafetyIcon } from "@components/Icons";
 
@@ -58,21 +56,18 @@ async function analyzeUser(messageId: string | undefined, user: any, silent = fa
     }
 
     openModal(modalProps => (
-        <ModalRoot {...modalProps} size={ModalSize.SMALL}>
-            <ModalHeader>
-                <span style={{ fontWeight: 700, fontSize: "16px", color: "var(--white-500, #fff)" }}>Dangercord Analysis</span>
-            </ModalHeader>
-            <ModalContent style={{ padding: "16px" }}>
-                {result.details.map((detail, i) => (
-                    <div key={i} className={`vc-analyze-detail vc-analyze-${detail.type}`} style={{ marginBottom: "6px" }}>
-                        {detail.message}
-                    </div>
-                ))}
-            </ModalContent>
-            <ModalFooter>
-                <Button onClick={modalProps.onClose}>Close</Button>
-            </ModalFooter>
-        </ModalRoot>
+        <Modal
+            {...modalProps}
+            size="sm"
+            title="Dangercord Analysis"
+            actions={[{ text: "Close", variant: "secondary", onClick: modalProps.onClose }]}
+        >
+            {result.details.map((detail, i) => (
+                <div key={i} className={`vc-analyze-detail vc-analyze-${detail.type}`} style={{ marginBottom: "6px" }}>
+                    {detail.message}
+                </div>
+            ))}
+        </Modal>
     ));
 }
 
@@ -101,29 +96,26 @@ function FindUserByIdModal({ modalProps }: { modalProps: any; }) {
     }
 
     return (
-        <ModalRoot {...modalProps} size={ModalSize.SMALL}>
-            <ModalHeader>
-                <span style={{ fontWeight: 700, fontSize: "16px", color: "var(--white-500, #fff)" }}>Find User by ID — CordCat</span>
-            </ModalHeader>
-            <ModalContent style={{ padding: "16px" }}>
-                <p style={{ marginBottom: "10px", color: "var(--text-muted)", fontSize: "13px" }}>
-                    Enter a Discord User ID to query CordCat:
-                </p>
-                <TextInput
-                    autoFocus
-                    placeholder="447812212241989632"
-                    value={userId}
-                    onChange={setUserId}
-                    onKeyDown={(e: React.KeyboardEvent) => { if (e.key === "Enter") submit(); }}
-                />
-            </ModalContent>
-            <ModalFooter>
-                <Button onClick={submit} disabled={!userId.trim()}>Look Up</Button>
-                <TextButton variant="link" onClick={modalProps.onClose} style={{ marginLeft: "8px" }}>
-                    Cancel
-                </TextButton>
-            </ModalFooter>
-        </ModalRoot>
+        <Modal
+            {...modalProps}
+            size="sm"
+            title="Find User by ID - CordCat"
+            actions={[
+                { text: "Look Up", variant: "primary", onClick: submit, disabled: !userId.trim() },
+                { text: "Cancel", variant: "secondary", onClick: modalProps.onClose },
+            ]}
+        >
+            <p style={{ marginBottom: "10px", color: "var(--text-muted)", fontSize: "13px" }}>
+                Enter a Discord User ID to query CordCat:
+            </p>
+            <TextInput
+                autoFocus
+                placeholder="447812212241989632"
+                value={userId}
+                onChange={setUserId}
+                onKeyDown={(e: React.KeyboardEvent) => { if (e.key === "Enter") submit(); }}
+            />
+        </Modal>
     );
 }
 
@@ -135,7 +127,9 @@ function getUserSearchLinks(userId: string) {
     const encodedId = encodeURIComponent(userId);
     return [
         { id: "top-gg", label: "top.gg", url: `https://top.gg/user/${encodedId}` },
-        { id: "discordhub", label: "DiscordHub", url: `https://discordhub.com/profile/${encodedId}` }
+        { id: "discordhub", label: "DiscordHub", url: `https://discordhub.com/profile/${encodedId}` },
+        { id: "cordcat", label: "CordCat", url: `https://cord.cat/${encodedId}` }
+
     ];
 }
 
@@ -143,7 +137,9 @@ function getServerSearchLinks(guildId: string) {
     const encodedId = encodeURIComponent(guildId);
     return [
         { id: "disboard", label: "Disboard", url: `https://disboard.org/es/server/${encodedId}` },
-        { id: "discordservers", label: "DiscordServers", url: `https://discordservers.com/server/${encodedId}` }
+        { id: "discordservers", label: "DiscordServers", url: `https://discordservers.com/server/${encodedId}` },
+        { id: "discordplace", label: "DiscordPlace", url: `https://discordplace.com/servers/${encodedId}` },
+        { id: "discords", label: "Discords", url: `https://discords.com/servers/${encodedId}` }
     ];
 }
 
