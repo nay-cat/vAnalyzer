@@ -80,7 +80,7 @@ Search unknown users
 | [VirusTotal](https://www.virustotal.com) | File | Scanner verdicts | ⚠️ Partial |
 | [HybridAnalysis](https://hybrid-analysis.com/) | URL/File | Multi-scanner verdicts | ❌ Yes |
 | [Dangercord](https://dangercord.com) | User | Reputation status | ❌ Yes |
-| [CordCat](https://cord.cat/donate) | User | Reputation status | ✅ No |
+| [CordCat](https://cord.cat/donate) | User | Reputation status | ❌ Yes |
 | WaybackMachine | URL | Web archive snapshot | ✅ No |
 | ModularScan | URL/File | Endpoint response | ⚠️ Depends |
 
