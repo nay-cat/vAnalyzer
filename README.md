@@ -10,12 +10,16 @@
 
 # How To Install
 
-
 ### src/userplugins folder
 
 > https://docs.vencord.dev/installing/#installing-your-custom-build
 > 
 > https://docs.vencord.dev/installing/custom-plugins/
+
+### Vesktop Install
+
+> Using [Veskforge](https://github.com/Microck/veskforge)
+> <img width="910" height="170" alt="image" src="https://github.com/user-attachments/assets/b198a2a6-a006-4cbc-839b-89ba4b783cd0" />
 
 
 
@@ -251,6 +255,7 @@ Active blocklists:
 
 1. [FMHY](https://github.com/fmhy/FMHYFilterlist) Unsafe Sites Filterlist
 2. User custom list.
+
 
 ## Disclaimer
 
