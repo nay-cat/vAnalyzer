@@ -5,13 +5,14 @@
  */
 
 import { classNameFactory } from "@utils/css";
-import { Toasts } from "@webpack/common";
+import type { ToastVariant } from "@vencord/discord-types";
+import { showToast } from "@webpack/common";
 
 export const cl = classNameFactory("vc-analyze-");
 
-export function safeToast(message: string, type: string = Toasts.Type.MESSAGE) {
+export function safeToast(message: string, variant: ToastVariant = "default") {
     try {
-        Toasts.show({ message, id: Toasts.genId(), type });
+        showToast({ text: message, variant });
     } catch { }
 }
 

@@ -5,7 +5,6 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { Toasts } from "@webpack/common";
 
 import { AnalysisValue, extractDomain, safeToast } from "../../utils";
 
@@ -18,7 +17,7 @@ export async function analyzeWithCrtSh(url: string, silent = false): Promise<Ana
     const result = await Native.queryCrtSh(domain);
 
     if (result.status !== 200 || !result.data) {
-        if (!silent) safeToast(`Certificate lookup failed: ${result.error ?? "unknown error"}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Certificate lookup failed: ${result.error ?? "unknown error"}`, "critical");
         return null;
     }
 
@@ -73,6 +72,6 @@ export async function analyzeWithCrtSh(url: string, silent = false): Promise<Ana
         type: "neutral"
     });
 
-    if (!silent) safeToast(`${certs.length} cert(s) for ${domain}`, Toasts.Type.SUCCESS);
+    if (!silent) safeToast(`${certs.length} cert(s) for ${domain}`, "success");
     return { details, timestamp: Date.now() };
 }

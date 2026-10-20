@@ -5,7 +5,6 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { Toasts } from "@webpack/common";
 
 import { AnalysisValue, extractDomain, safeToast } from "../../utils";
 
@@ -24,7 +23,7 @@ export async function analyzeWithWayback(url: string, silent = false): Promise<A
     const result = await Native.queryWayback(url);
 
     if (result.status !== 200 || !result.data) {
-        if (!silent) safeToast(`Wayback lookup failed: ${result.error ?? "unknown error"}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Wayback lookup failed: ${result.error ?? "unknown error"}`, "critical");
         return null;
     }
 
@@ -63,6 +62,6 @@ export async function analyzeWithWayback(url: string, silent = false): Promise<A
         type: "neutral"
     });
 
-    if (!silent) safeToast(`Wayback snapshot found for ${domain}`, Toasts.Type.SUCCESS);
+    if (!silent) safeToast(`Wayback snapshot found for ${domain}`, "success");
     return { details, timestamp: Date.now() };
 }

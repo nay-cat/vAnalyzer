@@ -5,7 +5,6 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { Toasts } from "@webpack/common";
 
 import { formatTimestamp } from "../../components/modalPrimitives";
 import { AnalysisValue, safeToast } from "../../utils";
@@ -21,7 +20,7 @@ export async function analyzeUserWithUbfb(userId: string, userName: string, sile
     const { blacklisted, entry, error } = await Native.queryUbfb(userId);
 
     if (error) {
-        if (!silent) safeToast(`UBFB lookup failed: ${error}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`UBFB lookup failed: ${error}`, "critical");
         return null;
     }
 
@@ -40,9 +39,9 @@ export async function analyzeUserWithUbfb(userId: string, userName: string, sile
 
     if (!silent) {
         if (blacklisted) {
-            safeToast(`WARNING: ${userName} is blacklisted on UBFB!`, Toasts.Type.FAILURE);
+            safeToast(`WARNING: ${userName} is blacklisted on UBFB!`, "critical");
         } else {
-            safeToast(`${userName} is not on the UBFB blacklist`, Toasts.Type.SUCCESS);
+            safeToast(`${userName} is not on the UBFB blacklist`, "success");
         }
     }
 
@@ -67,11 +66,11 @@ export async function reportUserToUbfb(
     });
 
     if (!ok) {
-        safeToast(`UBFB report failed: ${error ?? "unknown error"}`, Toasts.Type.FAILURE);
+        safeToast(`UBFB report failed: ${error ?? "unknown error"}`, "critical");
         return false;
     }
 
-    safeToast("Report submitted to UBFB for staff review", Toasts.Type.SUCCESS);
+    safeToast("Report submitted to UBFB for staff review", "success");
     return true;
 }
 
