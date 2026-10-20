@@ -6,7 +6,6 @@
 
 import { PluginNative } from "@utils/types";
 import { User } from "@vencord/discord-types";
-import { Toasts } from "@webpack/common";
 
 import { settings } from "../../settings";
 import { AnalysisValue, safeToast } from "../../utils";
@@ -81,7 +80,7 @@ export async function lookDangeCord(user: User, silent = false): Promise<Analysi
         const dcProfile = await Native.lookupDangeCordProfile(apiKey, memberId);
 
         if (dcProfile.status !== 200) {
-            if (!silent) safeToast(`Dangercord lookup failed: ${dcProfile.status}`, Toasts.Type.FAILURE);
+            if (!silent) safeToast(`Dangercord lookup failed: ${dcProfile.status}`, "critical");
             return null;
         }
 

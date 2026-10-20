@@ -5,7 +5,6 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { Toasts } from "@webpack/common";
 
 import { settings } from "../../settings";
 import { AnalysisValue, safeToast } from "../../utils";
@@ -68,14 +67,14 @@ export async function analyzeWithVirusTotal(messageId: string, url: string, sile
         if (lookup.status === 200 && lookup.data) {
             const stats = lookup.data?.data?.attributes?.last_analysis_stats;
             if (stats) {
-                if (!silent) safeToast(`Found! mal:${stats.malicious} sus:${stats.suspicious} safe:${stats.harmless + stats.undetected}`, Toasts.Type.SUCCESS);
+                if (!silent) safeToast(`Found! mal:${stats.malicious} sus:${stats.suspicious} safe:${stats.harmless + stats.undetected}`, "success");
                 return { details: buildDetails(stats), timestamp: Date.now() };
             }
         }
 
         // NEED APIKEY TO UPLOAD, FILE NOT FOUND
         if (!apiKey) {
-            if (!silent) safeToast("File not found on VirusTotal. Set an API key in settings to upload & scan.", Toasts.Type.FAILURE);
+            if (!silent) safeToast("File not found on VirusTotal. Set an API key in settings to upload & scan.", "critical");
             return null;
         }
 
@@ -87,13 +86,13 @@ export async function analyzeWithVirusTotal(messageId: string, url: string, sile
     const uploadResult = await Native.makeVirusTotalRequest(apiKey, url);
 
     if (uploadResult.status !== 200) {
-        if (!silent) safeToast("Failed to upload file to VirusTotal.", Toasts.Type.FAILURE);
+        if (!silent) safeToast("Failed to upload file to VirusTotal.", "critical");
         return null;
     }
 
     const analysisId = uploadResult.analysisId;
     if (!analysisId) {
-        if (!silent) safeToast("Could not get analysis ID from VirusTotal.", Toasts.Type.FAILURE);
+        if (!silent) safeToast("Could not get analysis ID from VirusTotal.", "critical");
         return null;
     }
 
@@ -112,7 +111,7 @@ export async function analyzeWithVirusTotal(messageId: string, url: string, sile
 
     const stats = reportData?.data?.attributes?.last_analysis_stats;
     if (!stats) {
-        if (!silent) safeToast("Could not parse VirusTotal report.", Toasts.Type.FAILURE);
+        if (!silent) safeToast("Could not parse VirusTotal report.", "critical");
         return null;
     }
 

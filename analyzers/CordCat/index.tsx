@@ -5,7 +5,7 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { Modal, openModal, React, Toasts } from "@webpack/common";
+import { Modal, openModal, React } from "@webpack/common";
 
 import { settings } from "../../settings";
 import { AnalysisValue, safeToast } from "../../utils";
@@ -17,7 +17,7 @@ const Native = VencordNative.pluginHelpers.vAnalyzer as PluginNative<typeof impo
 export async function analyzeUserWithCordCat(userId: string, username: string): Promise<void> {
     const apiKey = settings.store.cordCatApiKey?.trim();
     if (!apiKey) {
-        safeToast("CordCat requires an API key. Set it in vAnalyzer settings.", Toasts.Type.FAILURE);
+        safeToast("CordCat requires an API key. Set it in vAnalyzer settings.", "critical");
         return;
     }
 
@@ -26,7 +26,7 @@ export async function analyzeUserWithCordCat(userId: string, username: string): 
     const result = await Native.queryCordCat(userId, apiKey);
 
     if (result.status !== 200) {
-        safeToast(`CordCat lookup failed: HTTP ${result.status}`, Toasts.Type.FAILURE);
+        safeToast(`CordCat lookup failed: HTTP ${result.status}`, "critical");
         return;
     }
 

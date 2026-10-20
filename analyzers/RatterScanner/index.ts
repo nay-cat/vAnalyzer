@@ -5,7 +5,6 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { Toasts } from "@webpack/common";
 
 import { AnalysisValue, safeToast } from "../../utils";
 
@@ -17,7 +16,7 @@ export function isJarFile(fileName: string): boolean {
 
 export async function analyzeFileWithRatterScanner(fileUrl: string, fileName: string, silent = false): Promise<AnalysisValue | null> {
     if (!isJarFile(fileName)) {
-        if (!silent) safeToast("Ratter Scanner only supports .jar files.", Toasts.Type.FAILURE);
+        if (!silent) safeToast("Ratter Scanner only supports .jar files.", "critical");
         return null;
     }
 
@@ -26,7 +25,7 @@ export async function analyzeFileWithRatterScanner(fileUrl: string, fileName: st
     const { result, error } = await Native.queryRatterScanner(fileUrl);
 
     if (error || !result) {
-        if (!silent) safeToast(`Ratter Scanner lookup failed: ${error ?? "unknown error"}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Ratter Scanner lookup failed: ${error ?? "unknown error"}`, "critical");
         return null;
     }
 
@@ -48,9 +47,9 @@ export async function analyzeFileWithRatterScanner(fileUrl: string, fileName: st
 
     if (!silent) {
         if (result.malicious) {
-            safeToast(`WARNING: ${fileName} is known Minecraft malware!`, Toasts.Type.FAILURE);
+            safeToast(`WARNING: ${fileName} is known Minecraft malware!`, "critical");
         } else if (result.safe || result.automated_safe) {
-            safeToast(`${fileName} is known safe on Ratter Scanner`, Toasts.Type.SUCCESS);
+            safeToast(`${fileName} is known safe on Ratter Scanner`, "success");
         } else {
             safeToast(`${fileName} not found in Ratter Scanner database`);
         }

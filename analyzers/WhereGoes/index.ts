@@ -5,7 +5,6 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { Toasts } from "@webpack/common";
 
 import { AnalysisValue, safeToast } from "../../utils";
 
@@ -102,7 +101,7 @@ export async function analyzeWithWhereGoes(url: string, silent = false): Promise
     }
 
     if (result.status !== 200 || !result.html) {
-        if (!silent) safeToast(`Trace failed: ${result.error ?? "unknown error"}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`Trace failed: ${result.error ?? "unknown error"}`, "critical");
         return null;
     }
 
@@ -112,6 +111,6 @@ export async function analyzeWithWhereGoes(url: string, silent = false): Promise
         return { details: [{ message: "No redirects detected: direct URL", type: "safe" }], timestamp: Date.now() };
     }
 
-    if (!silent) safeToast(`${hops.length} hop(s) found`, Toasts.Type.SUCCESS);
+    if (!silent) safeToast(`${hops.length} hop(s) found`, "success");
     return { details: buildUrlDetails(hops), timestamp: Date.now() };
 }

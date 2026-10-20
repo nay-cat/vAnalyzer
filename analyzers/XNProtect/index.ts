@@ -5,7 +5,6 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { Toasts } from "@webpack/common";
 
 import { formatTimestamp } from "../../components/modalPrimitives";
 import { AnalysisValue, safeToast } from "../../utils";
@@ -19,7 +18,7 @@ export async function analyzeUserWithXnProtect(userId: string, userName: string,
     const { ban, error } = await Native.queryXnProtect(userId);
 
     if (error || !ban) {
-        if (!silent) safeToast(`XN Protect lookup failed: ${error ?? "unknown error"}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`XN Protect lookup failed: ${error ?? "unknown error"}`, "critical");
         return null;
     }
 
@@ -48,9 +47,9 @@ export async function analyzeUserWithXnProtect(userId: string, userName: string,
 
     if (!silent) {
         if (ban.banglobal) {
-            safeToast(`WARNING: ${userName} has an XN Protect global ban!`, Toasts.Type.FAILURE);
+            safeToast(`WARNING: ${userName} has an XN Protect global ban!`, "critical");
         } else {
-            safeToast(`${userName} has no XN Protect global ban`, Toasts.Type.SUCCESS);
+            safeToast(`${userName} has no XN Protect global ban`, "success");
         }
     }
 

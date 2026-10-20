@@ -5,7 +5,6 @@
  */
 
 import { PluginNative } from "@utils/types";
-import { Toasts } from "@webpack/common";
 
 import { AnalysisValue, extractDomain, safeToast } from "../../utils";
 
@@ -18,7 +17,7 @@ export async function analyzeWithFishFish(url: string, silent = false): Promise<
     const result = await Native.queryFishFish(domain);
 
     if (result.error) {
-        if (!silent) safeToast(`FishFish lookup failed: ${result.error}`, Toasts.Type.FAILURE);
+        if (!silent) safeToast(`FishFish lookup failed: ${result.error}`, "critical");
         return null;
     }
 
@@ -32,9 +31,9 @@ export async function analyzeWithFishFish(url: string, silent = false): Promise<
 
     if (!silent) {
         if (result.found) {
-            safeToast(`WARNING: ${domain} is a known phishing domain!`, Toasts.Type.FAILURE);
+            safeToast(`WARNING: ${domain} is a known phishing domain!`, "critical");
         } else {
-            safeToast(`${domain} not found in FishFish database`, Toasts.Type.SUCCESS);
+            safeToast(`${domain} not found in FishFish database`, "success");
         }
     }
 
