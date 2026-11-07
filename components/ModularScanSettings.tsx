@@ -7,7 +7,7 @@
 import { Button } from "@components/Button";
 import { Card } from "@components/Card";
 import { Flex } from "@components/Flex";
-import { HeadingSecondary, HeadingTertiary } from "@components/Heading";
+import { Heading } from "@components/Heading";
 import { Margins } from "@components/margins";
 import { Paragraph } from "@components/Paragraph";
 import { React, Select, TextArea, TextInput, useEffect, useState } from "@webpack/common";
@@ -70,11 +70,11 @@ export default function ModularScanSettings() {
 
         return (
             <Card className={Margins.top8}>
-                <HeadingSecondary>{headingLabel}</HeadingSecondary>
+                <Heading tag="h3" className={Margins.bottom8}>{headingLabel}</Heading>
 
                 <Flex flexDirection="column" gap={12} className={Margins.top16}>
                     <section>
-                        <HeadingTertiary>Name</HeadingTertiary>
+                        <Heading tag="h4" className={Margins.bottom8}>Name</Heading>
                         <TextInput
                             value={editing.name || ""}
                             onChange={(v: string) => setEditing({ ...editing, name: v })}
@@ -84,7 +84,7 @@ export default function ModularScanSettings() {
 
                     <Flex gap={12}>
                         <section style={{ flex: 1 }}>
-                            <HeadingTertiary>Type</HeadingTertiary>
+                            <Heading tag="h4" className={Margins.bottom8}>Type</Heading>
                             <Select
                                 options={[
                                     { label: "File", value: "file" },
@@ -96,7 +96,7 @@ export default function ModularScanSettings() {
                             />
                         </section>
                         <section style={{ flex: 1 }}>
-                            <HeadingTertiary>Method</HeadingTertiary>
+                            <Heading tag="h4" className={Margins.bottom8}>Method</Heading>
                             <Select
                                 options={[
                                     { label: "POST", value: "POST" },
@@ -111,7 +111,7 @@ export default function ModularScanSettings() {
                     </Flex>
 
                     <section>
-                        <HeadingTertiary>URL (Placeholders: {"{{fileUrl}}, {{fileName}}, {{url}}"})</HeadingTertiary>
+                        <Heading tag="h4" className={Margins.bottom8}>URL (Placeholders: {"{{fileUrl}}, {{fileName}}, {{url}}"})</Heading>
                         <TextInput
                             value={editing.url || ""}
                             onChange={(v: string) => setEditing({ ...editing, url: v })}
@@ -120,7 +120,7 @@ export default function ModularScanSettings() {
                     </section>
 
                     <section>
-                        <HeadingTertiary>Body Type</HeadingTertiary>
+                        <Heading tag="h4" className={Margins.bottom8}>Body Type</Heading>
                         <Select
                             options={[
                                 { label: "Multipart Form Data", value: "multipart" },
@@ -135,7 +135,7 @@ export default function ModularScanSettings() {
 
                     {editing.bodyType === "multipart" && (
                         <section>
-                            <HeadingTertiary>File Form Field</HeadingTertiary>
+                            <Heading tag="h4" className={Margins.bottom8}>File Form Field</Heading>
                             <TextInput
                                 value={editing.fileField || "file"}
                                 onChange={(v: string) => setEditing({ ...editing, fileField: v })}
@@ -146,7 +146,7 @@ export default function ModularScanSettings() {
 
                     {editing.bodyType === "json" && (
                         <section>
-                            <HeadingTertiary>JSON Template</HeadingTertiary>
+                            <Heading tag="h4" className={Margins.bottom8}>JSON Template</Heading>
                             <TextArea
                                 value={editing.jsonTemplate || ""}
                                 onChange={(v: string) => setEditing({ ...editing, jsonTemplate: v })}
@@ -163,7 +163,7 @@ export default function ModularScanSettings() {
                                 onChange={(v: boolean) => setEditing({ ...editing, autoScan: v })}
                             />
                             <div>
-                                <HeadingTertiary>Auto-Scan</HeadingTertiary>
+                                <Heading tag="h4" className={Margins.bottom8}>Auto-Scan</Heading>
                                 <Paragraph size="sm" style={{ color: "var(--text-muted)" }}>
                                     Run this module automatically when a new message with a matching URL/file is received
                                 </Paragraph>
@@ -173,7 +173,7 @@ export default function ModularScanSettings() {
 
                     {editing.autoScan && (
                         <Card style={{ padding: "12px", background: "var(--background-secondary)" }}>
-                            <HeadingTertiary>Auto-Scan Filter</HeadingTertiary>
+                            <Heading tag="h4" className={Margins.bottom8}>Auto-Scan Filter</Heading>
                             <Paragraph size="sm" style={{ color: "var(--text-muted)", marginBottom: "8px" }}>
                                 Only auto-scan URLs/files that match this filter. Set to "None" to scan everything.
                             </Paragraph>
@@ -224,7 +224,7 @@ export default function ModularScanSettings() {
     return (
         <section className={Margins.top16}>
             <Flex justifyContent="space-between" alignItems="center">
-                <HeadingSecondary>Modular Scan Configurations</HeadingSecondary>
+                <Heading tag="h3" className={Margins.bottom8}>Modular Scan Configurations</Heading>
                 <Button onClick={() => setEditing({})}>+ Add Module</Button>
             </Flex>
             <Paragraph className={Margins.top8} color="header-secondary">
